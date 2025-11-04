@@ -2,24 +2,76 @@ html, body {
     height: 100%;
     margin: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     background-color: #f8f9fa;
+    font-family: sans-serif;
 }
 
+/* Heart button */
 button {
     border: none;
     background: none;
     cursor: pointer;
-    padding: 0;           /* remove default padding */
+    padding: 0;
+    margin-top: 20px;
 }
 
 button .material-icons {
-    font-size: 20vw;      /* big, responsive */
-    color: #e91e63;       /* pink heart */
+    font-size: 20vw;
+    color: #e91e63;
     transition: transform 0.2s;
 }
 
 button:active .material-icons {
-    transform: scale(0.9); /* tap animation */
+    transform: scale(0.9);
+}
+
+/* Calendar layout */
+#monthTitle {
+    margin: 20px 0 10px;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    width: 90vw;
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+.day {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.today {
+    background: #e91e63;
+    color: white;
+    font-weight: bold;
+}
+
+.selected {
+    outline: 3px solid #e91e63;
+    outline-offset: -2px;
+}
+
+/* Small heart inside each day */
+.small-heart {
+    font-size: 1em;
+    color: #e91e63;
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
 }

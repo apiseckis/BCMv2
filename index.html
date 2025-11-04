@@ -3,27 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heart Toggle</title>
+  <title>Heart Toggle + Calendar</title>
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-
 </head>
+
 <body>
+  <!-- Heart toggle -->
   <button id="heart"><span class="material-icons">favorite_border</span></button>
+
+  <!-- Calendar -->
+  <div id="monthTitle"></div>
+  <div id="calendar"></div>
 
   <script>
     const btn = document.getElementById('heart');
-    const dateKey = new Date().toLocaleDateString();
-    function render(){
-      const state = localStorage.getItem(dateKey) === 'True';
+    const calendar = document.getElementById("calendar");
+    const monthTitle = document.getElementById("monthTitle");
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const today = now.getDate();
+
+    const lastDay = new Date(year, month + 1, 0);
+    const monthName = now.toLocaleString('default', { month: 'long' });
+    monthTitle.textContent = `${monthName} ${year}`;
+
+    let selectedDate = new Date(year, month, today);
+
+    function dateKey(date) {
+      return date.toLocaleDateString();
+    }
+
+    function renderHeart() {
+      const state = localStorage.getItem(dateKey(selectedDate)) === 'True';
       btn.firstElementChild.textContent = state ? 'favorite' : 'favorite_border';
     }
+
     btn.addEventListener('click', () => {
-      const current = localStorage.getItem(dateKey) === 'True';
-      localStorage.setItem(dateKey, current ? 'False' : 'True');
-      render();
+      const key = dateKey(selectedDate);
+      const current = localStorage.getItem(key) === 'True';
+      localStorage.setItem(key, current ? 'False' : 'True');
+      renderHeart();
+      renderCalendar();
     });
-    render();
+
+    function renderCalendar() {
+      calendar.innerHTML = '';
+
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const cell = document.createElement("div");
+        cell.classList.add("day");
+
+        const thisDate = new Date(year, month, day);
+        const key = dateKey(thisDate);
+        const isTrue = localStorage.getItem(key) === 'True';
+
+        // day number
+        const num = document.createElement("span");
+        num.textContent = day;
+        cell.appendChild(num);
+
+        // small heart if true
+        if (isTrue) {
+          const icon = document.createElement("span");
+          icon.classList.add("material-icons", "small-heart");
+          icon.textContent = "favorite";
+          cell.appendChild(icon);
+        }
+
+        // highlight today
+        if (day === today) cell.classList.add("today");
+
+        // click handler
+        cell.addEventListener("click", () => {
+          selectedDate = thisDate;
+          updateSelection();
+          renderHeart();
+        });
+
+        calendar.appendChild(cell);
+      }
+
+      updateSelection();
+    }
+
+    function updateSelection() {
+      document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+      const days = document.querySelectorAll(".day");
+      const index = selectedDate.getDate() - 1;
+      const selectedCell = calendar.children[index];
+      if (selectedCell) selectedCell.classList.add("selected");
+    }
+
+    renderCalendar();
+    renderHeart();
   </script>
 </body>
 </html>
